@@ -105,6 +105,35 @@ Content-Type: application/json
 }
 ```
 
+#### Get All Orders
+```bash
+GET /orders
+```
+
+### Example Response
+```json
+[
+  {
+    "id": 1,
+    "menuItem": "Burger",
+    "quantity": 2,
+    "status": "created"
+  },
+  {
+    "id": 2,
+    "menuItem": "Pizza",
+    "quantity": 1,
+    "status": "created"
+  }
+]
+```
+
+## Notifications
+The system currently supports email notifications. When a new order is created, you will see a log in the console:
+```plaintext
+Email sent: New order created
+```
+
 ## Extending the Project
 ### Adding a New Notification Method
 1. Create a new file (e.g., `PushNotification.js`) in `services/`.
@@ -129,4 +158,4 @@ Feel free to fork this repository and submit pull requests to enhance the projec
 This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ---
-**Created by [Your Name]** - Showcasing the SOLID principles with Node.js and JavaScript.
+**Created by [Erwing Solorzano]** - Showcasing the SOLID principles with Node.js and JavaScript.

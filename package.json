@@ -1,0 +1,17 @@
+{
+  "name": "restaurant-order-manager",
+  "version": "1.0.0",
+  "description": "A Node.js project designed to demonstrate the implementation of **SOLID principles** in software development. This project manages restaurant orders and menus while adhering to best practices in clean code and software architecture.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }, 
+  "keywords": ["SOLID", "Node.js", "restaurant", "example"],
+  "author": "Erwing Solorzano",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2"
+  }
+}

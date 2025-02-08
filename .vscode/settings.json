@@ -1,0 +1,6 @@
+{
+    "files.exclude": {
+        "**/explication-*.md": true,
+        "**/README.md": true,
+    }
+}  

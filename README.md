@@ -48,6 +48,8 @@ src/
 │   ├── OrderController.js # Handles API requests for orders
 ├── routes/
 │   ├── orderRoutes.js    # Routes for order management
+├── middlewares/
+│   ├── errorHandler.js   # Middleware for handling errors
 ├── app.js                # Express app configuration
 ├── server.js             # Server entry point
 ```
@@ -82,6 +84,7 @@ High-level modules depend on abstractions, not concrete implementations:
 |--------|---------------|------------------------|
 | GET    | `/orders`     | List all orders        |
 | POST   | `/orders`     | Create a new order     |
+| DELETE | `/orders/:id` | Delete an order by ID  |
 
 ### Example Request
 #### Create an Order
@@ -134,22 +137,9 @@ The system currently supports email notifications. When a new order is created, 
 Email sent: New order created
 ```
 
-## Extending the Project
-### Adding a New Notification Method
-1. Create a new file (e.g., `PushNotification.js`) in `services/`.
-2. Implement the `INotification` interface:
-   ```javascript
-   const INotification = require('../interfaces/INotification');
-
-   class PushNotification extends INotification {
-       send(message) {
-           console.log(`Push notification sent: ${message}`);
-       }
-   }
-
-   module.exports = PushNotification;
-   ```
-3. Use the new notification in `NotificationService`.
+## Additional Documentation
+- [Project Explanation (Spanish)](explication-spanish.md)
+- [Project Explanation (English)](explication-english.md)
 
 ## Contribution
 Feel free to fork this repository and submit pull requests to enhance the project.

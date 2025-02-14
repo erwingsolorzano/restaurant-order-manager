@@ -5,7 +5,7 @@ Este archivo detalla la estructura del proyecto, el propósito de cada archivo y
 ---
 
 ## **Estructura del Proyecto**
-Tu proyecto sigue una estructura modular y organizada para demostrar los principios **SOLID** y el uso de patrones de diseño como **MVC (Model-View-Controller)** y **Dependency Injection**.
+El presente proyecto sigue una estructura modular y organizada para demostrar los principios **SOLID** y el uso de patrones de diseño como **MVC (Model-View-Controller)** y **Dependency Injection**.
 
 ### **Estructura:**
 ```plaintext

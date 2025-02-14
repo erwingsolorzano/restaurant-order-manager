@@ -16,6 +16,17 @@ class OrderController {
         const orders = this.orderService.getOrders();
         res.json(orders);
     }
+
+    deleteOrder(req, res) {
+        const id = parseInt(req.params.id);
+        const result = this.orderService.deleteOrder(id);
+        if (result) {
+            res.status(200).json({ message: `Order with id ${id} deleted.` });
+        } else {
+            res.status(404).json({ message: `Order with id ${id} not found.` });
+        }
+    }
+      
 }
 
 module.exports = OrderController;

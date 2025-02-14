@@ -7,7 +7,8 @@ class OrderService {
     }
 
     createOrder(order) {
-        this.orders.push(order);
+        const id = this.orders.length + 1;
+        this.orders.push({...order, id});
         this.notificationService.sendNotification("New order created");
         return order;
     }
@@ -15,6 +16,16 @@ class OrderService {
     getOrders() {
         return this.orders;
     }
+
+    deleteOrder(id) {
+        const index = this.orders.findIndex(order => order.id === id);
+        if (index !== -1) {
+          this.orders.splice(index, 1);
+          return true;
+        }
+        return false;
+      }
+      
 }
 
 module.exports = OrderService;

@@ -3,27 +3,37 @@ const EmailNotification = require('../services/EmailNotification'); // Implement
 
 class OrderController {
     constructor() {
-        // Inicialización de OrderService con una dependencia
         this.orderService = new OrderService(new EmailNotification());
     }
 
-    createOrder(req, res) {
-        const order = this.orderService.createOrder(req.body);
-        res.status(201).json(order);
+    async createOrder(req, res) {
+        try {
+            const order = await this.orderService.createOrder(req.body);
+            res.status(201).json(order);
+        } catch (error) {
+            res.status(500).json({ message: 'Error creating order', error });
+        }
     }
 
-    getOrders(req, res) {
-        const orders = this.orderService.getOrders();
-        res.json(orders);
+    async getOrders(req, res) {
+        try {
+            const orders = await this.orderService.getOrders();
+            res.json(orders);
+        } catch (error) {
+            res.status(500).json({ message: 'Error fetching orders', error });
+        }
     }
 
-    deleteOrder(req, res) {
-        const id = parseInt(req.params.id);
-        const result = this.orderService.deleteOrder(id);
-        if (result) {
-            res.status(200).json({ message: `Order with id ${id} deleted.` });
-        } else {
-            res.status(404).json({ message: `Order with id ${id} not found.` });
+    async deleteOrder(req, res) {
+        try {
+            const success = await this.orderService.deleteOrder(req.params.id);
+            if (success) {
+                res.json({ message: 'Order deleted successfully' });
+            } else {
+                res.status(404).json({ message: 'Order not found' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Error deleting order', error });
         }
     }
       

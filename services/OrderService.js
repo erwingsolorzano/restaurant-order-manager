@@ -1,3 +1,4 @@
+const Order = require("../models/Order");
 const NotificationService = require("./NotificationService");
 
 class OrderService {
@@ -6,25 +7,22 @@ class OrderService {
         this.notificationService = new NotificationService(notification);
     }
 
-    createOrder(order) {
-        const id = this.orders.length + 1;
-        this.orders.push({...order, id});
-        this.notificationService.sendNotification("New order created");
+    async createOrder(orderData) {
+        const order = await Order.create(orderData);
         return order;
     }
 
-    getOrders() {
-        return this.orders;
+    async getOrders() {
+        return await Order.findAll();
     }
 
-    deleteOrder(id) {
-        const index = this.orders.findIndex(order => order.id === id);
-        if (index !== -1) {
-          this.orders.splice(index, 1);
-          return true;
-        }
-        return false;
-      }
+    async deleteOrder(id) {
+        const order = await Order.findByPk(id);
+        if (!order) return false;
+    
+        await order.destroy();
+        return true;
+    }
       
 }
 

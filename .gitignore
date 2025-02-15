@@ -2,3 +2,4 @@
 node_modules/
 explication-*.md
 README.md
+.env

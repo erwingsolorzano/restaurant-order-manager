@@ -1,8 +1,9 @@
 const Order = require('./Order');
 const MenuItem = require('./MenuItem');
+const User = require('./User');
 
-// Definir relaciones
+// Relaciones
 MenuItem.hasMany(Order, { foreignKey: 'menuItemId' });
 Order.belongsTo(MenuItem, { foreignKey: 'menuItemId' });
 
-module.exports = { Order, MenuItem };
+module.exports = { Order, MenuItem, User };

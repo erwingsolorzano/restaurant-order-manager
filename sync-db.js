@@ -1,10 +1,5 @@
 const sequelize = require('./db');
-const Order = require('./models/Order');
-const MenuItem = require('./models/MenuItem');
-
-// Definir relaciones
-MenuItem.hasMany(Order, { foreignKey: 'menuItemId' });
-Order.belongsTo(MenuItem, { foreignKey: 'menuItemId' });
+const { Order, MenuItem, User } = require('./models');
 
 async function syncDatabase() {
   try {

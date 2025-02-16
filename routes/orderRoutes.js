@@ -9,9 +9,9 @@ router.post(
   '/',
   // Validations
   [
-    body('menuItem')
-      .isString()
-      .withMessage('menuItem must be a string.')
+    body('menuItemId')
+      .isInt({ gt: 0 })
+      .withMessage('quantity must be a number and greater than zero.')
       .notEmpty()
       .withMessage('menuItem can not be empty.'),
     body('quantity')
@@ -28,7 +28,7 @@ router.post(
 );
 
 router.get('/', (req, res) => orderController.getOrders(req, res));
-
 router.delete('/:id', (req, res) => orderController.deleteOrder(req, res));
+router.put('/:id/status', (req, res) => orderController.updateOrderStatus(req, res));
 
 module.exports = router;

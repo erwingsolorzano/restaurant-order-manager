@@ -36,6 +36,22 @@ class OrderController {
             res.status(500).json({ message: 'Error deleting order', error });
         }
     }
+
+    async updateOrderStatus(req, res) {
+        const { status } = req.body;
+        const { id } = req.params;
+      
+        try {
+          const updatedOrder = await this.orderService.updateOrderStatus(id, status);
+          if (!updatedOrder) {
+            return res.status(404).json({ message: 'Order not found' });
+          }
+      
+          res.json(updatedOrder);
+        } catch (error) {
+          res.status(400).json({ message: error.message });
+        }
+      }      
       
 }
 

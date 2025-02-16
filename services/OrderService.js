@@ -1,5 +1,7 @@
-const Order = require("../models/Order");
+const { Order, MenuItem } = require('../models');
 const NotificationService = require("./NotificationService");
+
+const VALID_STATUSES = ['created', 'preparing', 'delivered', 'cancelled'];
 
 class OrderService {
     constructor(notification) {
@@ -13,7 +15,9 @@ class OrderService {
     }
 
     async getOrders() {
-        return await Order.findAll();
+        return await Order.findAll({
+            include: { model: MenuItem }
+        });
     }
 
     async deleteOrder(id) {
@@ -23,6 +27,23 @@ class OrderService {
         await order.destroy();
         return true;
     }
+
+    async updateOrderStatus(id, status) {
+        if (!VALID_STATUSES.includes(status)) {
+          throw new Error(`Invalid order state: ${status}`);
+        }
+      
+        const order = await Order.findByPk(id);
+        if (!order) {
+          return null;
+        }
+      
+        order.status = status;
+        await order.save();
+      
+        return order;
+      }
+      
       
 }
 

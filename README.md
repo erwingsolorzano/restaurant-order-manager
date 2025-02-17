@@ -1,151 +1,127 @@
 # Restaurant Order Manager
 
-A Node.js project designed to demonstrate the implementation of **SOLID principles** in software development. This project manages restaurant orders and menus while adhering to best practices in clean code and software architecture.
+This is a Full Stack project that simulates order and menu management in a restaurant. It uses Node.js, Express, Sequelize, and MySQL for the backend and React with Material UI for the frontend.
 
-## Features
-- **Order Management**: Create, list, and update orders.
-- **Menu Management**: Manage menu items.
-- **Notifications**: Notify users when orders are created (e.g., via email or SMS).
-- **Extensible Architecture**: Easily add new features while maintaining clean code.
+## Technologies Used
 
-## Prerequisites
-- [Node.js](https://nodejs.org/) installed (v14 or higher).
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/) for dependency management.
+### Backend:
+- Node.js
+- Express
+- Sequelize
+- MySQL
+- JWT (Authentication)
+- CORS
+
+### Frontend:
+- React
+- Axios
+- Material UI (MUI)
+
+## Project Structure
+
+```
+restaurant-order-manager/
+│
+├── backend/
+│   ├── models/           # Sequelize models
+│   ├── routes/           # Express routes
+│   ├── controllers/      # Controllers
+│   ├── services/         # Business logic
+│   ├── middlewares/      # Middlewares (JWT, CORS)
+│   ├── config/           # Database configuration
+│   ├── .env              # Environment variables (MySQL and JWT credentials)
+│   ├── server.js         # Backend entry point
+│   └── package.json      # Backend dependencies
+│
+├── restaurant-order-frontend/
+│   ├── src/
+│   │   ├── components/   # Reusable components
+│   │   ├── pages/        # Application pages
+│   │   ├── api/          # Axios configuration
+│   │   ├── App.js        # Main component
+│   │   ├── index.js      # React entry point
+│   ├── public/           # Static files
+│   ├── .env              # Frontend environment variables
+│   ├── package.json      # Frontend dependencies
+│   └── README.md         # Frontend documentation
+```
+
+## Implemented Features
+
+### Backend:
+- CRUD for Menu (`/menu`): Create, read, update, and delete menu items.
+- CRUD for Orders (`/orders`): Create, read, and delete orders.
+- Order Status Management: `created`, `preparing`, `delivered`, `cancelled`.
+- `Order -> MenuItem` relationship using Sequelize.
+- User registration and login (`/users`).
+- JWT authentication and protected routes.
+
+### Frontend:
+- Display menu with Material UI.
+- Axios configured to consume API.
+- Page navigation (`MenuPage`, `OrdersPage`, `LoginPage`, `RegisterPage`).
 
 ## Installation
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd restaurant-order-manager
-   ```
 
+### Backend:
+1. Clone the repository.
 2. Install dependencies:
    ```bash
    npm install
    ```
+3. Create a `.env` file in the backend root directory with the following credentials:
+   ```ini
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=your_password
+   DB_NAME=restaurant_manager
+   JWT_SECRET=super_secret_key
+   ```
+4. Sync the database:
+   ```bash
+   node sync-db.js
+   ```
+5. Start the server:
+   ```bash
+   npm run dev
+   ```
 
-3. Start the server:
+### Frontend:
+1. Navigate to the `restaurant-order-frontend` folder.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file in the frontend root directory with the API URL:
+   ```ini
+   REACT_APP_API_URL=http://localhost:3000
+   ```
+4. Start React:
    ```bash
    npm start
    ```
 
-4. The server will run on [http://localhost:3000](http://localhost:3000).
+## Backend Endpoints
 
-## Project Structure
-```plaintext
-src/
-├── models/
-│   ├── Order.js          # Model for orders
-│   ├── MenuItem.js       # Model for menu items
-├── services/
-│   ├── OrderService.js   # Business logic for orders
-│   ├── NotificationService.js # Notification service
-│   ├── EmailNotification.js  # Email notification implementation
-│   ├── SMSNotification.js    # SMS notification implementation
-├── interfaces/
-│   ├── INotification.js  # Notification interface
-├── controllers/
-│   ├── OrderController.js # Handles API requests for orders
-├── routes/
-│   ├── orderRoutes.js    # Routes for order management
-├── middlewares/
-│   ├── errorHandler.js   # Middleware for handling errors
-├── app.js                # Express app configuration
-├── server.js             # Server entry point
-```
-
-## Principles Demonstrated
-
-### 1. **Single Responsibility Principle (SRP)**
-Each class or module has a single, well-defined responsibility:
-- `OrderService.js`: Handles all order-related business logic.
-- `NotificationService.js`: Manages notifications.
-
-### 2. **Open/Closed Principle (OCP)**
-The system is open for extension but closed for modification:
-- You can add new notification methods (e.g., Push Notifications) by implementing `INotification` without modifying existing code.
-
-### 3. **Liskov Substitution Principle (LSP)**
-Derived classes can replace their base classes without breaking the application:
-- `EmailNotification` and `SMSNotification` are interchangeable implementations of `INotification`.
-
-### 4. **Interface Segregation Principle (ISP)**
-Large interfaces are divided into smaller, specific ones:
-- `INotification` defines only the methods required for notifications.
-
-### 5. **Dependency Inversion Principle (DIP)**
-High-level modules depend on abstractions, not concrete implementations:
-- `OrderService` depends on `INotification`, making it easy to switch between notification methods.
-
-## API Endpoints
+### Menu
+- `GET /menu`
+- `POST /menu`
+- `PUT /menu/:id`
+- `DELETE /menu/:id`
 
 ### Orders
-| Method | Endpoint      | Description            |
-|--------|---------------|------------------------|
-| GET    | `/orders`     | List all orders        |
-| POST   | `/orders`     | Create a new order     |
-| DELETE | `/orders/:id` | Delete an order by ID  |
+- `GET /orders`
+- `POST /orders` (Requires JWT)
+- `DELETE /orders/:id` (Requires JWT)
+- `PUT /orders/:id/status` (Requires JWT)
 
-### Example Request
-#### Create an Order
-```bash
-POST /orders
-Content-Type: application/json
+### Users
+- `POST /users/register`
+- `POST /users/login`
 
-{
-  "menuItem": "Burger",
-  "quantity": 2
-}
-```
+## Documentation
+- [Explanation in Spanish](./explication-spanish.md)
+- [Explanation in English](./explication-english.md)
 
-### Example Response
-```json
-{
-  "id": 1,
-  "menuItem": "Burger",
-  "quantity": 2,
-  "status": "created"
-}
-```
-
-#### Get All Orders
-```bash
-GET /orders
-```
-
-### Example Response
-```json
-[
-  {
-    "id": 1,
-    "menuItem": "Burger",
-    "quantity": 2,
-    "status": "created"
-  },
-  {
-    "id": 2,
-    "menuItem": "Pizza",
-    "quantity": 1,
-    "status": "created"
-  }
-]
-```
-
-## Notifications
-The system currently supports email notifications. When a new order is created, you will see a log in the console:
-```plaintext
-Email sent: New order created
-```
-
-## Additional Documentation
-- [Project Explanation (Spanish)](explication-spanish.md)
-- [Project Explanation (English)](explication-english.md)
-
-## Contribution
-Feel free to fork this repository and submit pull requests to enhance the project.
-
-## License
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
----
-**Created by [Erwing Solorzano]** - Showcasing the SOLID principles with Node.js and JavaScript.
+## Authors
+- Erwing Solorzano

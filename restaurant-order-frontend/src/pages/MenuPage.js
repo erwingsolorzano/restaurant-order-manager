@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import apiClient from '../api/apiClient';
 import MenuItemCard from '../components/MenuItemCard';
-import { Container, Typography, Grid, CircularProgress, Alert } from '@mui/material';
+import { Container, Grid, CircularProgress, Alert } from '@mui/material';
 
 function MenuPage() {
   const [menuItems, setMenuItems] = useState([]);
@@ -25,17 +25,15 @@ function MenuPage() {
   }, []);
 
   return (
-    <Container>
-      <Typography variant="h4" gutterBottom>
-        Menú del Restaurante
-      </Typography>
+    <Container sx={{ marginTop: 4 }}>
+      <h2>Menú del Restaurante 🍽️</h2>
 
       {loading && <CircularProgress />}
       {error && <Alert severity="error">{error}</Alert>}
 
-      <Grid container spacing={2}>
+      <Grid container spacing={3} justifyContent="center">
         {menuItems.map((item) => (
-          <Grid item xs={12} sm={6} md={4} key={item.id}>
+          <Grid item key={item.id}>
             <MenuItemCard item={item} />
           </Grid>
         ))}

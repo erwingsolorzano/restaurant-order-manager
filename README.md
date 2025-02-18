@@ -75,7 +75,7 @@ restaurant-order-manager/
    DB_USER=root
    DB_PASSWORD=your_password
    DB_NAME=restaurant_manager
-   JWT_SECRET=super_secret_key
+   JWT_KEY=super_secret_key
    ```
 4. Sync the database:
    ```bash

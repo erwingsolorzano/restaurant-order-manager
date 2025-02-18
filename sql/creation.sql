@@ -23,7 +23,7 @@ CREATE TABLE menuitems (
 CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     menuItemId INT NOT NULL,
-    quantity INT NOT NULL,
+    userId INT NOT NULL,
     status ENUM('created', 'preparing', 'delivered', 'cancelled') DEFAULT 'created',
     createdAt DATETIME NOT NULL,
     updatedAt DATETIME NOT NULL,

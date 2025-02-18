@@ -29,6 +29,7 @@ class UserService {
   async login(email, password) {
     const user = await User.findOne({ where: { email } });
 
+    // console.log('🚬 ===> login ===> user:', user);
     if (!user) {
       throw new Error('User not found');
     }
@@ -37,7 +38,6 @@ class UserService {
     if (!isValidPassword) {
       throw new Error('Incorrect password');
     }
-
     // Generar el token
     // TODO: Configurar los roles de usuario
     const token = jwt.sign({ userId: user.id, email: user.email, role: 'admin' }, process.env.JWT_KEY, {

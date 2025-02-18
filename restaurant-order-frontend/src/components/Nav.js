@@ -4,8 +4,6 @@ import { useUser } from '../context/UserContext';
 
 function Navbar() {
   const { user, setUser } = useUser();
-  console.log('Usuario en Navbar:', user);
-
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -26,6 +24,9 @@ function Navbar() {
             </Button>
             <Button color="inherit" component={Link} to="/orders">
               Pedidos
+            </Button>
+            <Button color="inherit" component={Link} to="/cart">
+            🛒 Carrito
             </Button>
           </Box>
         )}

@@ -1,4 +1,4 @@
-const { Order, MenuItem } = require('../models');
+const { Order, OrderItem, MenuItem } = require('../models');
 const NotificationService = require("./NotificationService");
 
 const VALID_STATUSES = ['created', 'preparing', 'delivered', 'cancelled'];
@@ -9,8 +9,19 @@ class OrderService {
         this.notificationService = new NotificationService(notification);
     }
 
-    async createOrder(orderData) {
-        const order = await Order.create(orderData);
+    async createOrder(userId, items) {
+        const order = await Order.create({ status: 'created', userId });
+    
+        console.log('🚬 ===> createOrder ===> order:', order);
+        const orderItems = items.map(item => ({
+          orderId: order.id,
+          menuItemId: item.menuItemId,
+          quantity: item.quantity,
+        }));
+        console.log('🚬 ===> createOrder ===> orderItems:', orderItems);
+    
+        await OrderItem.bulkCreate(orderItems);
+    
         return order;
     }
 

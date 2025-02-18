@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
+const OrderItem = require('./OrderItem');
 const MenuItem = require('./MenuItem');
 
 const Order = sequelize.define('Order', {
@@ -20,5 +21,11 @@ const Order = sequelize.define('Order', {
     defaultValue: 'created',
   },
 });
+
+Order.hasMany(OrderItem, { foreignKey: 'orderId', onDelete: 'CASCADE' });
+OrderItem.belongsTo(Order, { foreignKey: 'orderId' });
+
+OrderItem.belongsTo(MenuItem, { foreignKey: 'menuItemId' });
+MenuItem.hasMany(OrderItem, { foreignKey: 'menuItemId' });
 
 module.exports = Order;

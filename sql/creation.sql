@@ -29,3 +29,14 @@ CREATE TABLE orders (
     updatedAt DATETIME NOT NULL,
     FOREIGN KEY (menuItemId) REFERENCES menuitems(id) ON DELETE CASCADE
 );
+
+CREATE TABLE order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    orderId INT,
+    menuItemId INT,
+    quantity INT NOT NULL,
+    createdAt DATETIME NOT NULL,
+    updatedAt DATETIME NOT NULL,
+    FOREIGN KEY (orderId) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (menuItemId) REFERENCES menuitems(id)
+);

@@ -3,6 +3,7 @@ import apiClient from '../api/apiClient';
 import MenuItemCard from '../components/MenuItemCard';
 import { Container, Grid, CircularProgress, Alert, Button, Modal, Box, TextField, Typography, Switch, FormControlLabel } from '@mui/material';
 import { useUser } from '../context/UserContext';
+import { useCart } from '../context/CartContext';
 
 
 function MenuPage() {
@@ -10,6 +11,7 @@ function MenuPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useUser();
+  const { addToCart } = useCart();
   const [openModal, setOpenModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -43,16 +45,54 @@ function MenuPage() {
 
   const handleSubmit = async () => {
     try {
-      await apiClient.post('/menu', formData);
-      alert('Plato creado con éxito');
+      if (formData.id) {
+        await apiClient.put(`/menu/${formData.id}`, formData);
+        alert('Plato actualizado con éxito');
+        setMenuItems(
+          menuItems.map((item) =>
+            item.id === formData.id ? { ...item, ...formData } : item
+          )
+        );
+      } else {
+        const response = await apiClient.post('/menu', formData);
+        alert('Plato creado con éxito');
+        setMenuItems([...menuItems, response.data]);
+      }
       setOpenModal(false);
-      window.location.reload(); // Actualizar el menú
     } catch (error) {
       console.error(error);
-      alert('Error al crear el plato');
+      alert('Error al guardar el plato');
     }
+  };  
+
+  const handleEdit = (item) => {
+    setFormData({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      description: item.description,
+      available: item.available,
+    });
+    setOpenModal(true);
   };
   
+  const handleDelete = async (id) => {
+    if (!window.confirm('¿Seguro que quieres eliminar este plato?')) return;
+  
+    try {
+      await apiClient.delete(`/menu/${id}`);
+      alert('Plato eliminado con éxito');
+      setMenuItems(menuItems.filter((item) => item.id !== id)); // Actualiza el estado
+    } catch (error) {
+      console.error(error);
+      alert('Error al eliminar el plato');
+    }
+  };
+
+  const handleAddToCart = (menuItem) => {
+    addToCart(menuItem);
+    alert(`${menuItem.name} añadido al carrito`);
+  }; 
 
   useEffect(() => {
     async function fetchMenu() {
@@ -91,11 +131,16 @@ function MenuPage() {
       <Grid container spacing={3} justifyContent="center">
 
 
-        {menuItems.map((item) => (
-          <Grid item key={item.id}>
-            <MenuItemCard item={item} />
-          </Grid>
-        ))}
+      {menuItems.map((item) => (
+        <Grid item key={item.id}>
+          <MenuItemCard
+            item={item}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onAddToCart={handleAddToCart} // Esto lo usaremos más adelante para el carrito
+          />
+        </Grid>
+      ))}
 
         <Modal open={openModal} onClose={handleCloseModal}>
           <Box

@@ -8,7 +8,11 @@ class OrderController {
 
     async createOrder(req, res) {
         try {
-            const order = await this.orderService.createOrder(req.body);
+            // TODO: CHECK FOR ERRORS WITH NEW ORDER STRUCTURE...
+            const { items } = req.body; // [{ menuItemId, quantity }]
+            console.log('🚬 ===> createOrder ===> items:', items);
+            const userId = req.user.userId;
+            const order = await this.orderService.createOrder(userId, items);
             res.status(201).json(order);
         } catch (error) {
             res.status(500).json({ message: 'Error creating order', error });

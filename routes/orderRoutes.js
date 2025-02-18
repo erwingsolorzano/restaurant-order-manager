@@ -18,7 +18,8 @@ router.post(
       .withMessage('menuItem can not be empty.'),
     body('quantity')
       .isInt({ gt: 0 })
-      .withMessage('quantity must be a number and greater than zero.')
+      .withMessage('quantity must be a number and greater than zero.'),
+      authMiddleware
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -31,6 +32,6 @@ router.post(
 
 router.get('/', authMiddleware, (req, res) => orderController.getOrders(req, res));
 router.delete('/:id', authMiddleware, (req, res) => orderController.deleteOrder(req, res));
-router.put('/:id/status', (req, res) => orderController.updateOrderStatus(req, res));
+router.put('/:id/status', authMiddleware, (req, res) => orderController.updateOrderStatus(req, res));
 
 module.exports = router;

@@ -1,6 +1,147 @@
+import { useEffect, useState } from 'react';
+import apiClient from '../api/apiClient';
+import {
+  Container,
+  Typography,
+  CircularProgress,
+  Alert,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+} from '@mui/material';
+
 function OrdersPage() {
-    return <h2>Pedidos 🛒</h2>;
-  }
-  
-  export default OrdersPage;
-  
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    setError('');
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('Debes iniciar sesión para ver tus pedidos');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await apiClient.get('/orders', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setOrders(response.data);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error al cargar los pedidos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateOrderStatus = async (id, newStatus) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('Debes iniciar sesión');
+      return;
+    }
+
+    try {
+      await apiClient.put(
+        `/orders/${id}/status`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert(`Pedido ${id} actualizado a ${newStatus}`);
+      fetchOrders();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error al actualizar pedido');
+    }
+  };
+
+  return (
+    <Container sx={{ mt: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Tus Pedidos 🛒
+      </Typography>
+
+      {loading && <CircularProgress />}
+      {error && <Alert severity="error">{error}</Alert>}
+
+      {!loading && !error && orders.length === 0 && (
+        <Alert severity="info">No tienes pedidos aún.</Alert>
+      )}
+
+      {!loading && orders.length > 0 && (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Plato</TableCell>
+                <TableCell>Cantidad</TableCell>
+                <TableCell>Estado</TableCell>
+                <TableCell>Acciones</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {orders.map((order) => (
+                <TableRow key={order.id}>
+                  <TableCell>{order.id}</TableCell>
+                  <TableCell>{order.MenuItem ? order.MenuItem.name : 'Desconocido'}</TableCell>
+                  <TableCell>{order.quantity}</TableCell>
+                  <TableCell>{order.status}</TableCell>
+                  <TableCell>
+                    {order.status !== 'delivered' && order.status !== 'cancelled' && (
+                      <>
+                        {order.status === 'created' && (
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            size="small"
+                            onClick={() => updateOrderStatus(order.id, 'preparing')}
+                          >
+                            Preparando
+                          </Button>
+                        )}
+                        {order.status === 'preparing' && (
+                          <Button
+                            variant="outlined"
+                            color="success"
+                            size="small"
+                            onClick={() => updateOrderStatus(order.id, 'delivered')}
+                          >
+                            Entregado
+                          </Button>
+                        )}
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          size="small"
+                          sx={{ ml: 1 }}
+                          onClick={() => updateOrderStatus(order.id, 'cancelled')}
+                        >
+                          Cancelar
+                        </Button>
+                      </>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </Container>
+  );
+}
+
+export default OrdersPage;

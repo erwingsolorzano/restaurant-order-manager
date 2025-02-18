@@ -1,43 +1,55 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MenuPage from './pages/MenuPage';
 import OrdersPage from './pages/OrdersPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import { Container, AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { Container } from '@mui/material';
+import { UserProvider } from './context/UserContext';
+import PrivateRoute from './routes/PrivateRoute';
+import PublicRoute from './routes/PublicRoute';
+import Navbar from './components/Nav';
 
 function App() {
   return (
-    <Router>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Restaurant Order Manager
-          </Typography>
-          <Button color="inherit" component={Link} to="/menu">
-            Menú
-          </Button>
-          <Button color="inherit" component={Link} to="/orders">
-            Pedidos
-          </Button>
-          <Button color="inherit" component={Link} to="/login">
-            Iniciar Sesión
-          </Button>
-          <Button color="inherit" component={Link} to="/register">
-            Registro
-          </Button>
-        </Toolbar>
-      </AppBar>
+    <UserProvider>
+      <Router>
+        <Navbar />
+        <Container sx={{ marginTop: 4 }}>
+          <Routes>
+            <Route path="/" element={<MenuPage />} />
+            <Route path="/menu" element={<MenuPage />} />
 
-      <Container sx={{ marginTop: 4 }}>
-        <Routes>
-          <Route path="/" element={<MenuPage />} />
-          <Route path="/menu" element={<MenuPage />} />
-          <Route path="/orders" element={<OrdersPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-        </Routes>
-      </Container>
-    </Router>
+            {/* Protegida */}
+            <Route
+              path="/orders"
+              element={
+                <PrivateRoute>
+                  <OrdersPage />
+                </PrivateRoute>
+              }
+            />
+
+            {/* Públicas */}
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <LoginPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PublicRoute>
+                  <RegisterPage />
+                </PublicRoute>
+              }
+            />
+          </Routes>
+        </Container>
+      </Router>
+    </UserProvider>
   );
 }
 

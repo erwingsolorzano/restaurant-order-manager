@@ -1,5 +1,5 @@
 require('dotenv').config();
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 
@@ -10,7 +10,7 @@ class UserService {
     // Check for user existance
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      throw new Error('El correo ya está registrado');
+      throw new Error('email already in use');
     }
 
     // Hash the password
@@ -30,16 +30,16 @@ class UserService {
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      throw new Error('Usuario no encontrado');
+      throw new Error('User not found');
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      throw new Error('Contraseña incorrecta');
+      throw new Error('Incorrect password');
     }
 
     // Generar el token
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_KEY, {
+    const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_KEY, {
       expiresIn: '1h',
     });
 

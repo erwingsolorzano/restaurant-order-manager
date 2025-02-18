@@ -39,7 +39,8 @@ class UserService {
     }
 
     // Generar el token
-    const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_KEY, {
+    // TODO: Configurar los roles de usuario
+    const token = jwt.sign({ userId: user.id, email: user.email, role: 'admin' }, process.env.JWT_KEY, {
       expiresIn: '1h',
     });
 

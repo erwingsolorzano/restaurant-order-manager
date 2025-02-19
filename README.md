@@ -89,9 +89,9 @@ restaurant-order-manager/
    DB_NAME=restaurant_manager
    JWT_KEY=super_secret_key
    ```
-5. Sync Database:
-   ```bash
-   node sync-db.js
+5. Execute creation.sql file:
+   ```sql
+   creation.sql
    ```
 6. Start Backend:
    ```bash
@@ -135,9 +135,6 @@ restaurant-order-manager/
 
 ### Roles
 - `GET /roles` (Admin)
-- `POST /roles` (Admin)
-- `PUT /roles/:id` (Admin)
-- `DELETE /roles/:id` (Admin)
 
 ## Screenshots
 - [Explanation in Spanish](./explication-spanish.md)
@@ -145,30 +142,3 @@ restaurant-order-manager/
 
 ## Authors
 - Erwing Solorzano
-
-## Run Application
-1. Start Backend: `npm run dev` (from `backend/` folder).
-2. Start Frontend: `npm start` (from `restaurant-order-frontend/` folder).
-3. Open your browser at `http://localhost:3001`.
-
-## Folder Structure Overview
-```
-restaurant-order-manager/
-├── backend/
-├── restaurant-order-frontend/
-```
-
-## Environment Variables
-### Backend
-```
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=restaurant_manager
-JWT_KEY=super_secret_key
-```
-
-### Frontend
-```
-REACT_APP_API_URL=http://localhost:3000
-```

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import apiClient from '../api/apiClient';
 import { useCart } from '../context/CartContext';
+// import { useNavigate } from 'react-router-dom';
+
 import {
   Typography,
   Grid,
@@ -16,6 +18,9 @@ import {
   ListItemText,
   IconButton,
   Box,
+  Snackbar,
+  Dialog,
+  DialogContent,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -23,13 +28,13 @@ function MenuPage() {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const {
-    cartItems,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    clearCart,
-  } = useCart();
+  const { cartItems, addToCart, removeFromCart, updateQuantity, clearCart } = useCart();
+
+  const [creatingOrder, setCreatingOrder] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  // const navigate = useNavigate();
 
   useEffect(() => {
     fetchMenuItems();
@@ -50,12 +55,12 @@ function MenuPage() {
 
   const handleCreateOrder = async () => {
     const token = localStorage.getItem('token');
-
     if (!token) {
       alert('Debes iniciar sesión para crear una orden');
       return;
     }
 
+    setCreatingOrder(true);
     try {
       const items = cartItems.map((item) => ({
         menuItemId: item.id,
@@ -70,11 +75,18 @@ function MenuPage() {
         }
       );
 
-      alert('Orden creada con éxito');
+      setSuccessMessage('Orden creada con éxito!');
+      setOpenSnackbar(true);
       clearCart();
+
+      // setTimeout(() => {
+      //   navigate('/orders');
+      // }, 1500); // Redirigir después de la animación
     } catch (error) {
       console.error(error);
       alert('Error al crear la orden');
+    } finally {
+      setCreatingOrder(false);
     }
   };
 
@@ -181,6 +193,23 @@ function MenuPage() {
           </Box>
         )}
       </Grid>
+
+      {/* Modal tipo Spinner mientras se crea la orden */}
+      <Dialog open={creatingOrder} maxWidth="xs" fullWidth>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 3 }}>
+          <CircularProgress />
+          <Typography sx={{ mt: 2 }}>Creando tu orden...</Typography>
+        </DialogContent>
+      </Dialog>
+
+      {/* Snackbar de éxito */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+        message={successMessage}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      />
     </Grid>
   );
 }

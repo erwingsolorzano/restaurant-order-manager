@@ -50,4 +50,4 @@ CREATE TABLE roles (
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-INSERT INTO roles (name) VALUES ('user'), ('admin');
+INSERT INTO roles (name) VALUES ('admin'),('user');

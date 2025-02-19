@@ -89,7 +89,7 @@ restaurant-order-manager/
    DB_NAME=restaurant_manager
    JWT_KEY=super_secret_key
    ```
-5. Execute creation.sql file:
+5. Execute sql script:
    ```sql
    creation.sql
    ```

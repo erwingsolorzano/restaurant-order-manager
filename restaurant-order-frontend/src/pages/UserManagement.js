@@ -88,7 +88,7 @@ function UserManagement() {
                 <TableCell>{user.id}</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell>{user.role}</TableCell>
+                <TableCell>{user.Role.name}</TableCell>
                 <TableCell>
                   <Button onClick={() => handleOpen(user)} size="small">Editar</Button>
                   <Button onClick={() => handleDelete(user.id)} color="error" size="small">Eliminar</Button>

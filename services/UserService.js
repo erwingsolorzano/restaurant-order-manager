@@ -2,6 +2,7 @@ require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
+const Role = require('../models/Role');
 
 const incorrectCredentialsError = new Error('Invalid username or password.');
 class UserService {
@@ -28,7 +29,10 @@ class UserService {
   }
 
   async login(email, password) {
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email }, include: {
+      model: Role,
+      attributes: ['id', 'name'],
+    }, });
 
     if (!user) {
       throw incorrectCredentialsError;
@@ -40,7 +44,7 @@ class UserService {
     }
     // Generar el token
     // TODO: Configurar los roles de usuario
-    const token = jwt.sign({ userId: user.id, email: user.email, role: 'admin' }, process.env.JWT_KEY, {
+    const token = jwt.sign({ userId: user.id, email: user.email, role: user.Role.name }, process.env.JWT_KEY, {
       expiresIn: '1h',
     });
 
@@ -48,7 +52,12 @@ class UserService {
   }
 
   async getUsers() {
-    return await User.findAll();
+    return await User.findAll({
+      include: {
+        model: Role,
+        attributes: ['id', 'name'], // Traer solo esos campos
+      },
+    });
   }
 
   async updateUser(id, params) {

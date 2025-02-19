@@ -6,8 +6,10 @@ CREATE TABLE users (
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
+    roleId INT NOT NULL,
     createdAt DATETIME NOT NULL,
-    updatedAt DATETIME NOT NULL
+    updatedAt DATETIME NOT NULL,
+    FOREIGN KEY (roleId) REFERENCES roles(id)
 );
 
 CREATE TABLE menuitems (
@@ -41,3 +43,11 @@ CREATE TABLE orderitems (
     FOREIGN KEY (orderId) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (menuItemId) REFERENCES menuitems(id)
 );
+
+CREATE TABLE roles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+INSERT INTO roles (name) VALUES ('user'), ('admin');

@@ -65,12 +65,11 @@ class UserService {
     if (!user) {
       return null;
     }
-    const { name, email, role } = params;
+    const { name, email, roleId } = params;
     user.name = name;
     user.email = email;
-    // TODO: Configurar los roles de usuario
-    // user.role = role;
-    
+    user.roleId = roleId;
+
     await user.save();
   
     return user;

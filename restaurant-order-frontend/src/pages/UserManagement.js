@@ -1,19 +1,43 @@
 import { useEffect, useState } from 'react';
 import apiClient from '../api/apiClient';
 import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Alert,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Alert,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
+  const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [formData, setFormData] = useState({ name: '', email: '', role: '' });
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    roleId: '',
+  });
 
   useEffect(() => {
     fetchUsers();
+    fetchRoles();
   }, []);
 
   const fetchUsers = async () => {
@@ -28,16 +52,37 @@ function UserManagement() {
     }
   };
 
+  const fetchRoles = async () => {
+    try {
+      const response = await apiClient.get('/roles');
+      setRoles(response.data);
+    } catch (err) {
+      setError('Error al cargar los roles');
+    }
+  };
+
   const handleOpen = (user = null) => {
     setSelectedUser(user);
-    setFormData(user || { name: '', email: '', role: '' });
+    setFormData(
+      user
+        ? {
+            name: user.name,
+            email: user.email,
+            roleId: user.roleId || '',
+          }
+        : { name: '', email: '', roleId: '' }
+    );
     setOpen(true);
   };
 
   const handleClose = () => setOpen(false);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async () => {
@@ -50,7 +95,7 @@ function UserManagement() {
       handleClose();
       fetchUsers();
     } catch (err) {
-      setError('Error al guardar usuario');
+      setError('Error al guardar el usuario');
     }
   };
 
@@ -88,10 +133,18 @@ function UserManagement() {
                 <TableCell>{user.id}</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell>{user.Role.name}</TableCell>
+                <TableCell>{user.Role ? user.Role.name : 'Sin rol'}</TableCell>
                 <TableCell>
-                  <Button onClick={() => handleOpen(user)} size="small">Editar</Button>
-                  <Button onClick={() => handleDelete(user.id)} color="error" size="small">Eliminar</Button>
+                  <Button onClick={() => handleOpen(user)} size="small">
+                    Editar
+                  </Button>
+                  <Button
+                    onClick={() => handleDelete(user.id)}
+                    color="error"
+                    size="small"
+                  >
+                    Eliminar
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -99,17 +152,47 @@ function UserManagement() {
         </Table>
       </TableContainer>
 
-      {/* Modal */}
+      {/* Modal de Crear / Editar */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{selectedUser ? 'Editar Usuario' : 'Crear Usuario'}</DialogTitle>
         <DialogContent>
-          <TextField name="name" label="Nombre" value={formData.name} onChange={handleChange} fullWidth margin="normal" />
-          <TextField name="email" label="Correo" value={formData.email} onChange={handleChange} fullWidth margin="normal" />
-          <TextField name="role" label="Rol (user / admin)" value={formData.role} onChange={handleChange} fullWidth margin="normal" />
+          <TextField
+            name="name"
+            label="Nombre"
+            value={formData.name}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            name="email"
+            label="Correo Electrónico"
+            value={formData.email}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Rol</InputLabel>
+            <Select
+              name="roleId"
+              value={formData.roleId}
+              onChange={handleChange}
+            >
+              {roles.map((role) => (
+                <MenuItem key={role.id} value={role.id}>
+                  {role.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={handleSubmit} color="primary">{selectedUser ? 'Actualizar' : 'Crear'}</Button>
+          <Button onClick={handleSubmit} color="primary">
+            {selectedUser ? 'Actualizar' : 'Crear'}
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

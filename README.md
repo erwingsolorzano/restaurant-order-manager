@@ -1,6 +1,6 @@
 # Restaurant Order Manager
 
-This is a Full Stack project that simulates order and menu management in a restaurant. It uses Node.js, Express, Sequelize, and MySQL for the backend and React with Material UI for the frontend.
+This is a Full Stack project simulating order and menu management in a restaurant. It uses Node.js, Express, Sequelize, MySQL in the backend, and React with Material UI in the frontend.
 
 ## Technologies Used
 
@@ -16,6 +16,7 @@ This is a Full Stack project that simulates order and menu management in a resta
 - React
 - Axios
 - Material UI (MUI)
+- React Router
 
 ## Project Structure
 
@@ -23,53 +24,64 @@ This is a Full Stack project that simulates order and menu management in a resta
 restaurant-order-manager/
 │
 ├── backend/
-│   ├── models/           # Sequelize models
-│   ├── routes/           # Express routes
+│   ├── models/           # Sequelize Models
+│   ├── routes/           # Express Routes
 │   ├── controllers/      # Controllers
-│   ├── services/         # Business logic
+│   ├── services/         # Business Logic
 │   ├── middlewares/      # Middlewares (JWT, CORS)
-│   ├── config/           # Database configuration
-│   ├── .env              # Environment variables (MySQL and JWT credentials)
-│   ├── server.js         # Backend entry point
-│   └── package.json      # Backend dependencies
+│   ├── config/           # Database Configuration
+│   ├── .env              # Environment Variables (MySQL & JWT credentials)
+│   ├── server.js         # Backend Entry Point
+│   └── package.json      # Backend Dependencies
 │
 ├── restaurant-order-frontend/
 │   ├── src/
-│   │   ├── components/   # Reusable components
-│   │   ├── pages/        # Application pages
-│   │   ├── api/          # Axios configuration
-│   │   ├── App.js        # Main component
-│   │   ├── index.js      # React entry point
-│   ├── public/           # Static files
-│   ├── .env              # Frontend environment variables
-│   ├── package.json      # Frontend dependencies
-│   └── README.md         # Frontend documentation
+│   │   ├── components/   # Reusable Components
+│   │   ├── context/      # Context API (UserContext, CartContext)
+│   │   ├── pages/        # Application Pages
+│   │   ├── api/          # Axios Configuration
+│   │   ├── routes/       # Public and Private Routes
+│   │   ├── App.js        # Main Component
+│   │   ├── index.js      # React Entry Point
+│   ├── public/           # Static Files
+│   ├── .env              # Frontend Environment Variables
+│   ├── package.json      # Frontend Dependencies
+│   └── README.md         # Frontend Documentation
 ```
 
-## Implemented Features
+## Features Implemented
 
 ### Backend:
-- CRUD for Menu (`/menu`): Create, read, update, and delete menu items.
-- CRUD for Orders (`/orders`): Create, read, and delete orders.
-- Order Status Management: `created`, `preparing`, `delivered`, `cancelled`.
-- `Order -> MenuItem` relationship using Sequelize.
-- User registration and login (`/users`).
-- JWT authentication and protected routes.
+- CRUD for Menu (`/menu`): Create, read, update, and delete dishes (Logical Deletion).
+- CRUD for Orders (`/orders`): Create, read, update status, and delete orders.
+- Order Statuses: `created`, `preparing`, `delivered`, `cancelled`.
+- `Order -> OrderItem -> MenuItem` relationship with Sequelize.
+- User Registration and Login (`/users`).
+- Role-based Access Control (Admin/User).
+- JWT Authentication and Protected Routes.
+- Roles Table and Role Assignment to Users.
 
 ### Frontend:
-- Display menu with Material UI.
-- Axios configured to consume API.
-- Page navigation (`MenuPage`, `OrdersPage`, `LoginPage`, `RegisterPage`).
+- Display Menu with Material UI.
+- Add Items to Cart and Place Orders.
+- View and Update Order Status with visual feedback.
+- User Registration and Login with JWT handling.
+- Admin Section for Managing Users and Menu.
+- Logical Deletion for Menu Items.
+- Snackbar Notifications and Loading Spinners for UX.
+- React Router for Page Navigation.
+- Context API for User and Cart State Management.
 
 ## Installation
 
 ### Backend:
 1. Clone the repository.
-2. Install dependencies:
+2. Navigate to `backend/`.
+3. Install dependencies:
    ```bash
    npm install
    ```
-3. Create a `.env` file in the backend root directory with the following credentials:
+4. Create a `.env` file with your MySQL and JWT credentials:
    ```ini
    DB_HOST=localhost
    DB_USER=root
@@ -77,26 +89,26 @@ restaurant-order-manager/
    DB_NAME=restaurant_manager
    JWT_KEY=super_secret_key
    ```
-4. Sync the database:
+5. Sync Database:
    ```bash
    node sync-db.js
    ```
-5. Start the server:
+6. Start Backend:
    ```bash
    npm run dev
    ```
 
 ### Frontend:
-1. Navigate to the `restaurant-order-frontend` folder.
+1. Navigate to `restaurant-order-frontend/`.
 2. Install dependencies:
    ```bash
    npm install
    ```
-3. Create a `.env` file in the frontend root directory with the API URL:
+3. Create a `.env` file with the backend URL:
    ```ini
    REACT_APP_API_URL=http://localhost:3000
    ```
-4. Start React:
+4. Start React App:
    ```bash
    npm start
    ```
@@ -105,23 +117,58 @@ restaurant-order-manager/
 
 ### Menu
 - `GET /menu`
-- `POST /menu`
-- `PUT /menu/:id`
-- `DELETE /menu/:id`
+- `POST /menu` (Admin)
+- `PUT /menu/:id` (Admin)
+- `DELETE /menu/:id` (Logical Delete - Admin)
 
 ### Orders
-- `GET /orders`
-- `POST /orders` (Requires JWT)
-- `DELETE /orders/:id` (Requires JWT)
-- `PUT /orders/:id/status` (Requires JWT)
+- `GET /orders` (Authenticated)
+- `POST /orders` (Authenticated)
+- `PUT /orders/:id/status` (Admin)
 
 ### Users
+- `GET /users` (Admin)
 - `POST /users/register`
 - `POST /users/login`
+- `PUT /users/:id` (Admin)
+- `DELETE /users/:id` (Admin)
 
-## Documentation
+### Roles
+- `GET /roles` (Admin)
+- `POST /roles` (Admin)
+- `PUT /roles/:id` (Admin)
+- `DELETE /roles/:id` (Admin)
+
+## Screenshots
 - [Explanation in Spanish](./explication-spanish.md)
 - [Explanation in English](./explication-english.md)
 
 ## Authors
 - Erwing Solorzano
+
+## Run Application
+1. Start Backend: `npm run dev` (from `backend/` folder).
+2. Start Frontend: `npm start` (from `restaurant-order-frontend/` folder).
+3. Open your browser at `http://localhost:3001`.
+
+## Folder Structure Overview
+```
+restaurant-order-manager/
+├── backend/
+├── restaurant-order-frontend/
+```
+
+## Environment Variables
+### Backend
+```
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=restaurant_manager
+JWT_KEY=super_secret_key
+```
+
+### Frontend
+```
+REACT_APP_API_URL=http://localhost:3000
+```

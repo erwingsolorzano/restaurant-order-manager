@@ -20,10 +20,8 @@ class OrderController {
     async getOrders(req, res) {
         try {
             const orders = await this.orderService.getOrders();
-            console.log('🚬 ===> getOrders ===> orders:', orders);
             res.json(orders);
         } catch (error) {
-            console.log('🚬 ===> getOrders ===> error:', error.message);
             res.status(500).json({ message: 'Error fetching orders', error });
         }
     }

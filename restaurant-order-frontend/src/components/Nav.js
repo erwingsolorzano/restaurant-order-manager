@@ -17,6 +17,11 @@ function Navbar() {
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           Restaurant Order Manager
         </Typography>
+        {user?.role === 'admin' && (
+          <Button color="inherit" component={Link} to="/admin">
+            ADMINISTRACIÓN
+          </Button>
+        )}
         {user && (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Button color="inherit" component={Link} to="/menu">
@@ -25,9 +30,9 @@ function Navbar() {
             <Button color="inherit" component={Link} to="/orders">
               Pedidos
             </Button>
-            <Button color="inherit" component={Link} to="/cart">
+            {/* <Button color="inherit" component={Link} to="/cart">
             🛒 Carrito
-            </Button>
+            </Button> */}
           </Box>
         )}
         {user ? (
@@ -44,9 +49,9 @@ function Navbar() {
             <Button color="inherit" component={Link} to="/login">
               Iniciar Sesión
             </Button>
-            <Button color="inherit" component={Link} to="/register">
+            {/* <Button color="inherit" component={Link} to="/register">
               Registro
-            </Button>
+            </Button> */}
           </>
         )}
       </Toolbar>

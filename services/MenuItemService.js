@@ -6,7 +6,9 @@ class MenuItemService {
   }
 
   async getAllMenuItems() {
-    return await MenuItem.findAll();
+    return await MenuItem.findAll({
+      where: { deleted: false },
+    });
   }
 
   async getMenuItemById(id) {
@@ -22,11 +24,14 @@ class MenuItemService {
 
   async deleteMenuItem(id) {
     const menuItem = await MenuItem.findByPk(id);
-    if (!menuItem) return false;
-
-    await menuItem.destroy();
-    return true;
-  }
+    if (!menuItem) {
+      throw new Error('MenuItem not found');
+    }
+  
+    menuItem.deleted = true;
+    await menuItem.save();
+    return menuItem;
+  }  
 }
 
 module.exports = MenuItemService;

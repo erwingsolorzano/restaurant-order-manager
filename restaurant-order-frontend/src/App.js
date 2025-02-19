@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Container } from '@mui/material';
 import { UserProvider } from './context/UserContext';
 import { CartProvider } from './context/CartContext';
@@ -10,6 +10,7 @@ import OrdersPage from './pages/OrdersPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import CartPage from './pages/CartPage';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   return (
@@ -19,10 +20,22 @@ function App() {
           <Navbar />
           <Container sx={{ marginTop: 4 }}>
             <Routes>
-              <Route path="/" element={<MenuPage />} />
-              <Route path="/menu" element={<MenuPage />} />
-
-              {/* Protegida */}
+              <Route
+                path="/"
+                element={
+                  <PrivateRoute>
+                    <Navigate to="/menu" />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/menu"
+                element={
+                  <PrivateRoute>
+                    <MenuPage />
+                  </PrivateRoute>
+                }
+              />
               <Route
                 path="/orders"
                 element={
@@ -31,8 +44,15 @@ function App() {
                   </PrivateRoute>
                 }
               />
+              <Route
+                path="/cart"
+                element={
+                  <PrivateRoute>
+                    <CartPage />
+                  </PrivateRoute>
+                }
+              />
 
-              {/* Públicas */}
               <Route
                 path="/login"
                 element={
@@ -49,7 +69,16 @@ function App() {
                   </PublicRoute>
                 }
               />
-              <Route path="/cart" element={<CartPage />} />
+              <Route
+                path="/admin"
+                element={
+                  <PrivateRoute>
+                    <AdminPage />
+                  </PrivateRoute>
+                }
+              />
+              {/* Rutas inválidas */}
+              <Route path="*" element={<Navigate to="/login" />} />
             </Routes>
           </Container>
         </Router>

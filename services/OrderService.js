@@ -47,20 +47,20 @@ class OrderService {
     }
 
     async updateOrderStatus(id, status) {
-        if (!VALID_STATUSES.includes(status)) {
-          throw new Error(`Invalid order state: ${status}`);
-        }
-      
-        const order = await Order.findByPk(id);
-        if (!order) {
-          return null;
-        }
-      
-        order.status = status;
-        await order.save();
-      
-        return order;
+      if (!VALID_STATUSES.includes(status)) {
+        throw new Error(`Invalid order state: ${status}`);
       }
+    
+      const order = await Order.findByPk(id);
+      if (!order) {
+        return null;
+      }
+    
+      order.status = status;
+      await order.save();
+    
+      return order;
+    }
       
       
 }

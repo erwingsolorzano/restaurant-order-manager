@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import apiClient from '../api/apiClient';
-import { TextField, Button, Container, Typography, Alert, Box } from '@mui/material';
+import { TextField, Button, Container, Typography, Alert, Box, CircularProgress, Modal } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 function RegisterPage() {
@@ -8,27 +8,34 @@ function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
+    setLoading(true);
 
     try {
-      const response = await apiClient.post('/users/register', {
+      await apiClient.post('/users/register', {
         name,
         email,
         password,
       });
 
-      localStorage.setItem('token', response.data.token);
+      // Mostrar el modal con el spinner
+      setOpenModal(true);
 
-      setSuccess('Usuario registrado con éxito');
-      setTimeout(() => navigate('/login'), 1500); // Redirige después de registrar
+      // Redirigir después de 2 segundos al login
+      setTimeout(() => {
+        setOpenModal(false);
+        navigate('/login');
+      }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Error al registrar usuario');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -39,7 +46,6 @@ function RegisterPage() {
       </Typography>
 
       {error && <Alert severity="error">{error}</Alert>}
-      {success && <Alert severity="success">{success}</Alert>}
 
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
         <TextField
@@ -49,6 +55,7 @@ function RegisterPage() {
           margin="normal"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          disabled={loading}
         />
         <TextField
           label="Correo Electrónico"
@@ -57,6 +64,7 @@ function RegisterPage() {
           margin="normal"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
         />
         <TextField
           label="Contraseña"
@@ -66,11 +74,42 @@ function RegisterPage() {
           margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          disabled={loading}
         />
-        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-          Registrarse
+        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }} disabled={loading}>
+          {loading ? <CircularProgress size={24} color="inherit" /> : 'Registrarse'}
         </Button>
       </Box>
+
+      {/* Modal Spinner */}
+      <Modal
+        open={openModal}
+        onClose={(event, reason) => {
+          if (reason === 'backdropClick') return; // Evita cerrar por hacer clic fuera
+        }}
+        disableEscapeKeyDown
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            borderRadius: 2,
+          }}
+        >
+          <CircularProgress size={60} />
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Registrando...
+          </Typography>
+        </Box>
+      </Modal>
     </Container>
   );
 }

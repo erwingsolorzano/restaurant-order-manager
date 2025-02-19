@@ -1,222 +1,187 @@
 import { useEffect, useState } from 'react';
 import apiClient from '../api/apiClient';
-import MenuItemCard from '../components/MenuItemCard';
-import { Container, Grid, CircularProgress, Alert, Button, Modal, Box, TextField, Typography, Switch, FormControlLabel } from '@mui/material';
-import { useUser } from '../context/UserContext';
 import { useCart } from '../context/CartContext';
-
+import {
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+  CircularProgress,
+  Alert,
+  TextField,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  Box,
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 function MenuPage() {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { user } = useUser();
-  const { addToCart } = useCart();
-  const [openModal, setOpenModal] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    price: '',
-    description: '',
-    available: true,
-  });
-
-  const handleOpenModal = () => {
-    setFormData({
-      name: '',
-      price: '',
-      description: '',
-      available: true,
-    });
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleToggleAvailable = () => {
-    setFormData({ ...formData, available: !formData.available });
-  };
-
-  const handleSubmit = async () => {
-    try {
-      if (formData.id) {
-        await apiClient.put(`/menu/${formData.id}`, formData);
-        alert('Plato actualizado con éxito');
-        setMenuItems(
-          menuItems.map((item) =>
-            item.id === formData.id ? { ...item, ...formData } : item
-          )
-        );
-      } else {
-        const response = await apiClient.post('/menu', formData);
-        alert('Plato creado con éxito');
-        setMenuItems([...menuItems, response.data]);
-      }
-      setOpenModal(false);
-    } catch (error) {
-      console.error(error);
-      alert('Error al guardar el plato');
-    }
-  };  
-
-  const handleEdit = (item) => {
-    setFormData({
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      description: item.description,
-      available: item.available,
-    });
-    setOpenModal(true);
-  };
-  
-  const handleDelete = async (id) => {
-    if (!window.confirm('¿Seguro que quieres eliminar este plato?')) return;
-  
-    try {
-      await apiClient.delete(`/menu/${id}`);
-      alert('Plato eliminado con éxito');
-      setMenuItems(menuItems.filter((item) => item.id !== id)); // Actualiza el estado
-    } catch (error) {
-      console.error(error);
-      alert('Error al eliminar el plato');
-    }
-  };
-
-  const handleAddToCart = (menuItem) => {
-    addToCart(menuItem);
-    alert(`${menuItem.name} añadido al carrito`);
-  }; 
+  const [error, setError] = useState('');
+  const {
+    cartItems,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+  } = useCart();
 
   useEffect(() => {
-    async function fetchMenu() {
-      try {
-        const response = await apiClient.get('/menu');
-        setMenuItems(response.data);
-      } catch (err) {
-        setError('Error al cargar el menú');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchMenu();
+    fetchMenuItems();
   }, []);
 
+  const fetchMenuItems = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await apiClient.get('/menu');
+      setMenuItems(response.data);
+    } catch (err) {
+      setError('Error al cargar el menú');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateOrder = async () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert('Debes iniciar sesión para crear una orden');
+      return;
+    }
+
+    try {
+      const items = cartItems.map((item) => ({
+        menuItemId: item.id,
+        quantity: item.quantity,
+      }));
+
+      await apiClient.post(
+        '/orders',
+        { items },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      alert('Orden creada con éxito');
+      clearCart();
+    } catch (error) {
+      console.error(error);
+      alert('Error al crear la orden');
+    }
+  };
+
   return (
-    <Container sx={{ marginTop: 4 }}>
-      <h2>Menú del Restaurante 🍽️</h2>
+    <Grid container spacing={3}>
+      {/* Menú */}
+      <Grid item xs={8}>
+        <Typography variant="h4" gutterBottom>
+          Menú del Restaurante 🍽️
+        </Typography>
 
-      {loading && <CircularProgress />}
-      {error && <Alert severity="error">{error}</Alert>}
+        {loading && <CircularProgress />}
+        {error && <Alert severity="error">{error}</Alert>}
 
-      {user && user.role === 'admin' && (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenModal}
-          >
-            Agregar Plato
-          </Button>
-        </Box>
-      )}
-      <Grid container spacing={3} justifyContent="center">
-
-
-      {menuItems.map((item) => (
-        <Grid item key={item.id}>
-          <MenuItemCard
-            item={item}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onAddToCart={handleAddToCart} // Esto lo usaremos más adelante para el carrito
-          />
+        <Grid container spacing={2}>
+          {menuItems.map((item) => (
+            <Grid item key={item.id} xs={12} sm={6} md={4}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6">{item.name}</Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {item.description || 'Sin descripción'}
+                  </Typography>
+                  <Typography variant="h5" color="primary">
+                    ${Number(item.price).toFixed(2)}
+                  </Typography>
+                  <Typography
+                    color={item.available ? 'success.main' : 'error.main'}
+                  >
+                    {item.available ? 'Disponible' : 'No Disponible'}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={!item.available}
+                    onClick={() => addToCart(item)}
+                  >
+                    Añadir al Carrito
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
-      ))}
+      </Grid>
 
-        <Modal open={openModal} onClose={handleCloseModal}>
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 400,
-              bgcolor: 'background.paper',
-              boxShadow: 24,
-              p: 4,
-              borderRadius: 2,
-            }}
-          >
-            {/* Icono de Cerrar */}
-            {/* Encabezado del Modal con Título y Botón X en la misma línea */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6">
-                {formData.id ? 'Editar Plato' : 'Agregar Plato'}
-              </Typography>
+      {/* Carrito */}
+      <Grid item xs={4}>
+        <Typography variant="h5" gutterBottom>
+          Carrito 🛒
+        </Typography>
 
-              <Button
-                onClick={handleCloseModal}
-                sx={{
-                  minWidth: 'auto',
-                  color: 'rgba(0, 0, 0, 0.5)', // Negro con transparencia
-                  fontSize: '1.5rem', // 5% más grande aprox
-                  '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.05)',
-                  },
-                }}
-              >
-                ✖
-              </Button>
-            </Box>
+        {cartItems.length === 0 && (
+          <Typography variant="body1">El carrito está vacío</Typography>
+        )}
 
+        <List>
+          {cartItems.map((item) => (
+            <ListItem key={item.id} sx={{ display: 'flex', alignItems: 'center' }}>
+              <ListItemText
+                primary={item.name}
+                secondary={`$${Number(item.price).toFixed(2)}`}
+              />
+              <TextField
+                type="number"
+                size="small"
+                value={item.quantity}
+                onChange={(e) => updateQuantity(item.id, parseInt(e.target.value) || 1)}
+                sx={{ width: 60 }}
+              />
+              <IconButton onClick={() => removeFromCart(item.id)} color="error">
+                <DeleteIcon />
+              </IconButton>
+            </ListItem>
+          ))}
+        </List>
 
-            {/* Tu formulario sigue igual */}
-            <TextField
-              label="Nombre"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Precio"
-              name="price"
-              type="number"
-              value={formData.price}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Descripción"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-            />
-            <FormControlLabel
-              control={<Switch checked={formData.available} onChange={handleToggleAvailable} />}
-              label="Disponible"
-            />
-            <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ mt: 2 }}>
-              Guardar Plato
+        {cartItems.length > 0 && (
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="h6">
+              Total: $
+              {cartItems
+                .reduce((acc, item) => acc + Number(item.price) * item.quantity, 0)
+                .toFixed(2)}
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleCreateOrder}
+              sx={{ mt: 1 }}
+            >
+              Crear Orden
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={clearCart}
+              sx={{ mt: 1, ml: 1 }}
+            >
+              Vaciar Carrito
             </Button>
           </Box>
-        </Modal>
-
+        )}
       </Grid>
-    </Container>
+    </Grid>
   );
 }
 

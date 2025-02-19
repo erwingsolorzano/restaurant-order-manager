@@ -17,6 +17,10 @@ const MenuItem = sequelize.define('MenuItem', {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
+  deleted: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  }
 }, {
   timestamps: true,
 });

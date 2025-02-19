@@ -90,6 +90,7 @@ function OrdersPage() {
                 <TableCell>Cantidad</TableCell>
                 <TableCell>Estado</TableCell>
                 <TableCell>Acciones</TableCell>
+                <TableCell>Total ($)</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -99,7 +100,7 @@ function OrdersPage() {
                   <TableCell>
                     {order.OrderItems.map((item) => (
                       <div key={item.id}>
-                        {item.MenuItem ? item.MenuItem.name : 'Desconocido'}
+                        {item.MenuItem ? item.MenuItem.name : 'Desconocido'} - ${item.MenuItem.price}
                       </div>
                     ))}
                   </TableCell>
@@ -143,6 +144,12 @@ function OrdersPage() {
                         </Button>
                       </>
                     )}
+                  </TableCell>
+                  <TableCell>
+                    {order.OrderItems.reduce((acc, item) => {
+                      const price = item.MenuItem?.price ?? 0;
+                      return acc + item.quantity * parseFloat(price);
+                    }, 0).toFixed(2)}
                   </TableCell>
                 </TableRow>
               ))}

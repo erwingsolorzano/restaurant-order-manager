@@ -16,6 +16,7 @@ CREATE TABLE menuitems (
     price DECIMAL(10, 2) NOT NULL,
     description VARCHAR(255) DEFAULT NULL,
     available BOOLEAN DEFAULT TRUE,
+    deleted BOOLEAN DEFAULT FALSE,
     createdAt DATETIME NOT NULL,
     updatedAt DATETIME NOT NULL
 );

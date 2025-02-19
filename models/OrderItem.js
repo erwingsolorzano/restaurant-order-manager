@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
-const MenuItem = require('./MenuItem'); // Importamos el MenuItem para la relación
+const MenuItem = require('./MenuItem');
 
 const OrderItem = sequelize.define('OrderItem', {
   quantity: {
@@ -9,11 +9,11 @@ const OrderItem = sequelize.define('OrderItem', {
   },
   menuItemId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
     references: {
       model: MenuItem,
       key: 'id',
     },
+    allowNull: false,
   },
 }, {
   timestamps: true,

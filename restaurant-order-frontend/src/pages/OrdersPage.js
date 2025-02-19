@@ -86,7 +86,7 @@ function OrdersPage() {
             <TableHead>
               <TableRow>
                 <TableCell>ID</TableCell>
-                <TableCell>Plato</TableCell>
+                <TableCell>Plato(s)</TableCell>
                 <TableCell>Cantidad</TableCell>
                 <TableCell>Estado</TableCell>
                 <TableCell>Acciones</TableCell>
@@ -96,8 +96,18 @@ function OrdersPage() {
               {orders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell>{order.id}</TableCell>
-                  <TableCell>{order.MenuItem ? order.MenuItem.name : 'Desconocido'}</TableCell>
-                  <TableCell>{order.quantity}</TableCell>
+                  <TableCell>
+                    {order.OrderItems.map((item) => (
+                      <div key={item.id}>
+                        {item.MenuItem ? item.MenuItem.name : 'Desconocido'}
+                      </div>
+                    ))}
+                  </TableCell>
+                  <TableCell>
+                    {order.OrderItems.map((item) => (
+                      <div key={item.id}>{item.quantity}</div>
+                    ))}
+                  </TableCell>
                   <TableCell>{order.status}</TableCell>
                   <TableCell>
                     {order.status !== 'delivered' && order.status !== 'cancelled' && (

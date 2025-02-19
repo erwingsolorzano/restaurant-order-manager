@@ -1,10 +1,15 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 const OrderItem = require('./OrderItem');
+const User = require('./User');
 
 const Order = sequelize.define('Order', {
   userId: {
     type: DataTypes.INTEGER,
+    references: {
+      model: User,
+      key: 'id',
+    },
     allowNull: false,
   },
   status: {

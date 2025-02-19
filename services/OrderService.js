@@ -1,5 +1,6 @@
 const Order = require('../models/Order');
 const OrderItem = require('../models/OrderItem');
+const MenuItem = require('../models/MenuItem');
 const NotificationService = require("./NotificationService");
 
 const VALID_STATUSES = ['created', 'preparing', 'delivered', 'cancelled'];
@@ -12,17 +13,13 @@ class OrderService {
 
     async createOrder(userId, items) {
       try {
-        console.log('🚬 ===> createOrder ===> items:', items);
-        console.log('🚬 ===> createOrder ===> userId:', userId);
         const order = await Order.create({ status: 'created', userId });
     
-        console.log('🚬 ===> createOrder ===> order:', order);
         const orderItems = items.map(item => ({
           orderId: order.id,
           menuItemId: item.menuItemId,
           quantity: item.quantity,
         }));
-        console.log('🚬 ===> createOrder ===> orderItems:', orderItems);
     
         await OrderItem.bulkCreate(orderItems);
     
@@ -34,10 +31,12 @@ class OrderService {
     }
 
     async getOrders() {
-        return await Order.findAll({
-            include: { model: MenuItem }
-        });
+      return await Order.findAll({
+        include: [{ model: OrderItem, include: [MenuItem] }],
+      });
     }
+    
+    
 
     async deleteOrder(id) {
         const order = await Order.findByPk(id);

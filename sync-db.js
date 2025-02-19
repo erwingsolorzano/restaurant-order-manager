@@ -1,15 +1,12 @@
 const sequelize = require('./db');
-const { Order, MenuItem, User } = require('./models');
+require('./models/Order');
+require('./models/OrderItem');
+require('./models/MenuItem');
+require('./models/User');
 
-async function syncDatabase() {
-  try {
-    await sequelize.sync({ alter: true });
-    console.log('Base de datos sincronizada correctamente con relaciones.');
-  } catch (error) {
-    console.error('Error al sincronizar la base de datos:', error);
-  } finally {
-    await sequelize.close();
-  }
-}
-
-syncDatabase();
+sequelize.sync({ force: true }).then(() => {
+  console.log('Base de datos sincronizada');
+  process.exit();
+}).catch((error) => {
+  console.error('Error al sincronizar la base de datos:', error);
+});

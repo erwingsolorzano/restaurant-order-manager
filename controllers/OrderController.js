@@ -8,11 +8,9 @@ class OrderController {
 
     async createOrder(req, res) {
         try {
-            // TODO: CHECK FOR ERRORS WITH NEW ORDER STRUCTURE...
-            const { items } = req.body; // [{ menuItemId, quantity }]
+            const { items } = req.body;
             const userId = req.user.userId;
             const order = await this.orderService.createOrder(userId, items);
-            console.log('🚬 ===> createOrder ===> order:', order);
             res.status(201).json(order);
         } catch (error) {
             res.status(500).json({ message: 'Error creating order', error });
@@ -22,8 +20,10 @@ class OrderController {
     async getOrders(req, res) {
         try {
             const orders = await this.orderService.getOrders();
+            console.log('🚬 ===> getOrders ===> orders:', orders);
             res.json(orders);
         } catch (error) {
+            console.log('🚬 ===> getOrders ===> error:', error.message);
             res.status(500).json({ message: 'Error fetching orders', error });
         }
     }

@@ -22,15 +22,15 @@ CREATE TABLE menuitems (
 
 CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    menuItemId INT NOT NULL,
     userId INT NOT NULL,
     status ENUM('created', 'preparing', 'delivered', 'cancelled') DEFAULT 'created',
     createdAt DATETIME NOT NULL,
     updatedAt DATETIME NOT NULL,
-    FOREIGN KEY (menuItemId) REFERENCES menuitems(id) ON DELETE CASCADE
+    FOREIGN KEY (menuItemId) REFERENCES menuitems(id),
+    FOREIGN KEY (userId) REFERENCES users(id)
 );
 
-CREATE TABLE order_items (
+CREATE TABLE orderitems (
     id INT AUTO_INCREMENT PRIMARY KEY,
     orderId INT,
     menuItemId INT,

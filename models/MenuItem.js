@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
+const OrderItem = require('./OrderItem');
 
 const MenuItem = sequelize.define('MenuItem', {
   name: {
@@ -7,7 +8,7 @@ const MenuItem = sequelize.define('MenuItem', {
     allowNull: false,
   },
   price: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
   },
   description: {
@@ -17,6 +18,9 @@ const MenuItem = sequelize.define('MenuItem', {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
+}, {
+  timestamps: true,
 });
+
 
 module.exports = MenuItem;

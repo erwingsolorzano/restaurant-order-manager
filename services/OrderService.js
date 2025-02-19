@@ -1,4 +1,5 @@
-const { Order, OrderItem, MenuItem } = require('../models');
+const Order = require('../models/Order');
+const OrderItem = require('../models/OrderItem');
 const NotificationService = require("./NotificationService");
 
 const VALID_STATUSES = ['created', 'preparing', 'delivered', 'cancelled'];
@@ -10,6 +11,9 @@ class OrderService {
     }
 
     async createOrder(userId, items) {
+      try {
+        console.log('🚬 ===> createOrder ===> items:', items);
+        console.log('🚬 ===> createOrder ===> userId:', userId);
         const order = await Order.create({ status: 'created', userId });
     
         console.log('🚬 ===> createOrder ===> order:', order);
@@ -23,6 +27,10 @@ class OrderService {
         await OrderItem.bulkCreate(orderItems);
     
         return order;
+      } catch (error) {
+        console.log(error);
+        return error.message || error;
+      }
     }
 
     async getOrders() {

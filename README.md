@@ -136,9 +136,23 @@ restaurant-order-manager/
 ### Roles
 - `GET /roles` (Admin)
 
+
+## Methodology explication
+- [Explanation in Spanish](./assets/explication-spanish.md)
+- [Explanation in English](./assets/explication-english.md)
+
 ## Screenshots
-- [Explanation in Spanish](./explication-spanish.md)
-- [Explanation in English](./explication-english.md)
+### Página Principal
+![Página Principal](./assets/login.png)
+
+### Vista de administrador
+![Admin](./assets/admin-view.png)
+
+### Carrito
+![Cart](./assets/cart.png)
+
+### Ordenes
+![Orders](./assets/orders.png)
 
 ## Authors
 - Erwing Solorzano

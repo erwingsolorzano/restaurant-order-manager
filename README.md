@@ -148,8 +148,11 @@ restaurant-order-manager/
 ### Vista de administrador
 ![Admin](./assets/admin-view.png)
 
-### Vista de usuario
-![User](./assets/user-view.png)
+### Carrito
+![Cart](./assets/cart.png)
+
+### Ordenes
+![Orders](./assets/orders.png)
 
 ## Authors
 - Erwing Solorzano

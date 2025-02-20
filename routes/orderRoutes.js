@@ -9,6 +9,8 @@ const orderController = new OrderController();
 
 router.post('/', authMiddleware, (req, res) => orderController.createOrder(req, res));
 router.get('/', authMiddleware, (req, res) => orderController.getOrders(req, res));
+router.get('/active', authMiddleware, (req, res) => orderController.getActiveOrders(req, res));
+router.get('/completed', authMiddleware, (req, res) => orderController.getCompletedOrders(req, res));
 router.delete('/:id', authMiddleware, (req, res) => orderController.deleteOrder(req, res));
 router.put('/:id/status', authMiddleware, (req, res) => orderController.updateOrderStatus(req, res));
 

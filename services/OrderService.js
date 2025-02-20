@@ -4,7 +4,8 @@ const MenuItem = require('../models/MenuItem');
 const NotificationService = require("./NotificationService");
 
 const VALID_STATUSES = ['created', 'preparing', 'delivered', 'cancelled'];
-
+const activeOrders = ['created', 'preparing'];
+const finalizedOrders = ['delivered', 'cancelled'];
 class OrderService {
     constructor(notification) {
         this.orders = [];
@@ -35,8 +36,32 @@ class OrderService {
         include: [{ model: OrderItem, include: [MenuItem] }],
       });
     }
-    
-    
+
+    async getActiveOrders() {
+      return await Order.findAll({
+        where: {
+          status: activeOrders,
+        },
+        include: [{ model: OrderItem, include: [MenuItem] }],
+      });
+    }
+
+    async getCompletedOrders(offset, limit) {
+      return await Order.findAndCountAll({
+        where: {
+          status: ['delivered', 'cancelled'],
+        },
+        include: [
+          {
+            model: OrderItem,
+            include: [MenuItem],
+          },
+        ],
+        offset,
+        limit,
+        distinct: true,
+      });
+    }
 
     async deleteOrder(id) {
         const order = await Order.findByPk(id);

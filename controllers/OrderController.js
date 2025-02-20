@@ -26,6 +26,31 @@ class OrderController {
         }
     }
 
+    async getActiveOrders(req, res) {
+        try {
+            const orders = await this.orderService.getActiveOrders();
+            res.json(orders);
+        } catch (error) {
+            res.status(500).json({ message: 'Error fetching orders', error });
+        }
+    }
+
+    async getCompletedOrders(req, res) {
+        try {
+          const { page = 0, limit = 5 } = req.query; // Page y limit desde query params
+          const offset = parseInt(page) * parseInt(limit);
+      
+          const { rows: orders, count } = await this.orderService.getCompletedOrders(
+            offset,
+            parseInt(limit)
+          );
+      
+          res.json({ orders, total: count });
+        } catch (error) {
+          res.status(500).json({ message: 'Error fetching completed orders', error });
+        }
+      }      
+
     async deleteOrder(req, res) {
         try {
             const success = await this.orderService.deleteOrder(req.params.id);

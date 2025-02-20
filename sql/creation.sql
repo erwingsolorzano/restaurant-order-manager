@@ -52,7 +52,6 @@ CREATE TABLE orders (
     status ENUM('created', 'preparing', 'delivered', 'cancelled') DEFAULT 'created',
     createdAt DATETIME NOT NULL,
     updatedAt DATETIME NOT NULL,
-    FOREIGN KEY (menuItemId) REFERENCES menuitems(id),
     FOREIGN KEY (userId) REFERENCES users(id)
 );
 

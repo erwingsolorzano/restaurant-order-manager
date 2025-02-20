@@ -78,6 +78,15 @@ class UserService {
   async getUserById(id) {
     return await User.findByPk(id);
   }
+
+  async deleteUser(id) {
+    const user = await User.findByPk(id);
+    if (!user) return false;
+
+    await user.destroy();
+    return true;
+  }
+
 }
 
 module.exports = UserService;

@@ -1,4 +1,5 @@
 const MenuItem = require('../models/MenuItem');
+const Category = require('../models/Category');
 
 class MenuItemService {
   async createMenuItem(data) {
@@ -8,6 +9,7 @@ class MenuItemService {
   async getAllMenuItems() {
     return await MenuItem.findAll({
       where: { deleted: false },
+      include: [Category],
     });
   }
 

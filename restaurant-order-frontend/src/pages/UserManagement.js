@@ -173,12 +173,13 @@ function UserManagement() {
             margin="normal"
           />
 
-          <FormControl fullWidth margin="normal">
+          <FormControl fullWidth variant="outlined" size="medium">
             <InputLabel>Rol</InputLabel>
             <Select
               name="roleId"
               value={formData.roleId}
               onChange={handleChange}
+              label="Rol"
             >
               {roles.map((role) => (
                 <MenuItem key={role.id} value={role.id}>

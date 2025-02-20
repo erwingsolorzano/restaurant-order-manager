@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
+const Category = require('./Category');
 
 const MenuItem = sequelize.define('MenuItem', {
   name: {
@@ -17,6 +18,14 @@ const MenuItem = sequelize.define('MenuItem', {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
+  categoryId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Category,
+      key: 'id',
+    },
+    allowNull: false,
+  },
   deleted: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
@@ -25,5 +34,7 @@ const MenuItem = sequelize.define('MenuItem', {
   timestamps: true,
 });
 
+MenuItem.belongsTo(Category, { foreignKey: 'categoryId' });
+Category.hasMany(MenuItem, { foreignKey: 'categoryId' });
 
 module.exports = MenuItem;

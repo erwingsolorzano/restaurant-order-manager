@@ -17,10 +17,15 @@ import {
   Alert,
   Switch,
   FormControlLabel,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 
 function MenuManagement() {
   const [menuItems, setMenuItems] = useState([]);
+  const [categories, setCategories] = useState([]); // Estado para las categorías
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [open, setOpen] = useState(false);
@@ -30,10 +35,12 @@ function MenuManagement() {
     price: '',
     description: '',
     available: true,
+    categoryId: '',
   });
 
   useEffect(() => {
     fetchMenuItems();
+    fetchCategories(); // Llamada para obtener las categorías
   }, []);
 
   const fetchMenuItems = async () => {
@@ -48,10 +55,19 @@ function MenuManagement() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await apiClient.get('/categories');
+      setCategories(response.data);
+    } catch (err) {
+      console.error('Error al cargar categorías', err);
+    }
+  };
+
   const handleOpen = (item = null) => {
     setSelectedItem(item);
     setFormData(
-      item || { name: '', price: '', description: '', available: true }
+      item || { name: '', price: '', description: '', available: true, categoryId: '' }
     );
     setOpen(true);
   };
@@ -112,6 +128,7 @@ function MenuManagement() {
               <TableCell>Nombre</TableCell>
               <TableCell>Precio</TableCell>
               <TableCell>Descripción</TableCell>
+              <TableCell>Categoría</TableCell>
               <TableCell>Disponible</TableCell>
               <TableCell>Acciones</TableCell>
             </TableRow>
@@ -123,6 +140,7 @@ function MenuManagement() {
                 <TableCell>{item.name}</TableCell>
                 <TableCell>${Number(item.price).toFixed(2)}</TableCell>
                 <TableCell>{item.description || 'Sin descripción'}</TableCell>
+                <TableCell>{item.Category ? item.Category.name : 'Sin Categoría'}</TableCell>
                 <TableCell>{item.available ? 'Sí' : 'No'}</TableCell>
                 <TableCell>
                   <Button onClick={() => handleOpen(item)} size="small">
@@ -171,6 +189,23 @@ function MenuManagement() {
             fullWidth
             margin="normal"
           />
+
+            <FormControl fullWidth variant="outlined" size="medium">
+            <InputLabel>Categoria</InputLabel>
+            <Select
+              value={formData.categoryId || ''}
+              onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+              label="Categoría"
+              >
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+
           <FormControlLabel
             control={
               <Switch

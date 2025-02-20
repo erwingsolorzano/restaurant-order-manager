@@ -86,11 +86,22 @@ function UserManagement() {
   };
 
   const handleSubmit = async () => {
+    const payload = { ...formData };
+    
+    // Si no se está creando, no enviar el password vacío
+    if (!selectedUser && !payload.password) {
+      setError('La contraseña es obligatoria');
+      return;
+    }
+    if (selectedUser && !payload.password) {
+      delete payload.password;
+    }
+  
     try {
       if (selectedUser) {
-        await apiClient.put(`/users/${selectedUser.id}`, formData);
+        await apiClient.put(`/users/${selectedUser.id}`, payload);
       } else {
-        await apiClient.post('/users', formData);
+        await apiClient.post('/users/register', payload);
       }
       handleClose();
       fetchUsers();
@@ -98,6 +109,7 @@ function UserManagement() {
       setError('Error al guardar el usuario');
     }
   };
+  
 
   const handleDelete = async (id) => {
     try {
@@ -172,7 +184,15 @@ function UserManagement() {
             fullWidth
             margin="normal"
           />
-
+          <TextField
+            name="password"
+            label="Contraseña"
+            type="password"
+            value={formData.password || ''}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
           <FormControl fullWidth variant="outlined" size="medium">
             <InputLabel>Rol</InputLabel>
             <Select

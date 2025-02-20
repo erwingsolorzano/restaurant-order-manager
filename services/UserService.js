@@ -7,7 +7,7 @@ const Role = require('../models/Role');
 const incorrectCredentialsError = new Error('Invalid username or password.');
 class UserService {
   async register(userData) {
-    const { name, email, password } = userData;
+    const { name, email, password, roleId } = userData;
 
     // Check for user existance
     const existingUser = await User.findOne({ where: { email } });
@@ -23,6 +23,7 @@ class UserService {
       name,
       email,
       password: hashedPassword,
+      roleId,
     });
 
     return user;

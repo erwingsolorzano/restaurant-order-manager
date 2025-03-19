@@ -18,7 +18,7 @@ function App() {
       <CartProvider>
         <Router>
           <Navbar />
-          <Container sx={{ marginTop: 4 }}>
+          <Container sx={{ marginTop: 14 }}>
             <Routes>
               <Route
                 path="/"
